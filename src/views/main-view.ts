@@ -9,6 +9,8 @@ export function renderMainView(showView:showCallBack, context:Context):HTMLEleme
     create('header',main,'Main')
     create('button',main,'Suchen').onclick = () => showView("search")
     create('button',main,'Gegenstand hinzufuegen').onclick = () => showView("edit")
+    create('button',main,'Übersicht').onclick = () => showView("stats")
+
     
     return main;
 }

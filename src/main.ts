@@ -18,16 +18,14 @@ async function main() {
     document.body.append(renderLoader())
     try {
         context = await generateContext()
-        show(localStorage.getItem('ui-view') as (views | undefined) || 'main')
-        let x = await getItemById(context.database, 1)
-        console.log("READ", x)
+        await show(localStorage.getItem('ui-view') as (views | undefined) || 'main')
     }
     catch (e) {
         console.error(e)
     }
 }
 
-let show: showCallBack = (view) => {
+let show: showCallBack = async (view) => {
     let render: HTMLElement;
     console.log("Show View", view)
     clear(document.body)
@@ -45,7 +43,7 @@ let show: showCallBack = (view) => {
             render = renderEditView(show, context)
             break;
         case "stats":
-            render = renderStatsView(show, context)
+            render = await renderStatsView(show, context)
             break;
         case "details":
             render = renderDetailsView(show, context)

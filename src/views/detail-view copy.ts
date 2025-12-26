@@ -8,6 +8,11 @@ export function renderDetailsView( showView:showCallBack,context:Context):HTMLEl
 
     let main =  addClasses( create('main'),'container')
     let header = create('header',main,'Search')
-    create('button',header, 'back').onclick = ()=> showView('main')
+    create('button',header, 'back').onclick = ()=> {
+        showView('stats')
+        context.categoryOfInterest = undefined
+    }
+
+    create('p',main,context.categoryOfInterest)
     return main;
 }
