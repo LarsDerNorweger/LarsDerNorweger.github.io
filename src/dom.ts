@@ -32,7 +32,7 @@ export function renderTable(target: HTMLElement, ...header: string[]): HTMLTable
     let h = create('tr', create('thead', res))
     for (let s of header)
         create('th', h, s)
-    let x = create('tbody', res)
+     create('tbody', res)
     return res;
 
 }

@@ -1,5 +1,5 @@
 import { Context } from "./context";
-import { getItemById, openStorageDB } from "./db/storage-db";
+import {  openStorageDB } from "./db/storage-db";
 import { addClasses, clear, create } from "./dom"
 import './main.scss'
 import { renderDetailsView } from "./views/detail-view copy";

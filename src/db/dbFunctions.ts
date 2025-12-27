@@ -11,7 +11,7 @@ export interface DBDescription {
 }
 
 export function openDB(name: string, version: number, updateSchema: (db: IDBDatabase) => void): Promise<IDBDatabase> {
-    return new Promise((res, rej) => {
+    return new Promise((res) => {
         let db = indexedDB.open(name, version)
         db.onupgradeneeded = (event) => {
             if (event.newVersion ?? 0 > version)
