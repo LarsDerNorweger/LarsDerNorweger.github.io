@@ -1,26 +1,39 @@
 import { Context } from "../context";
 import { update, write } from "../db/dbFunctions";
-import { DBStorageEntry, getItemById, STORAGE } from "../db/storage-db";
+import { DBStorageEntry, getAvailabelKeys, getItemById, getNextID, STORAGE } from "../db/storage-db";
 import { addClasses, clear, create } from "../dom";
 import { showCallBack } from "./views";
 
-export function renderEditView(showView: showCallBack, context: Context): HTMLElement {
+import './edit-view.scss'
+
+export async function renderEditView(showView: showCallBack, context: Context): Promise<HTMLElement> {
     let main = addClasses(create('main', document.body), 'container')
     let header = addClasses(create('header', main), 'container')
     create('h2', header, 'Neuer Gegenstand')
-    main.appendChild(renderInputForm(showView, context))
+    main.appendChild(await renderInputForm(showView, context))
     return main;
 }
 
-function renderInputForm(showView: showCallBack, context: Context) {
+async function renderInputForm(showView: showCallBack, context: Context) {
+    
     let form = create('form')
     let trg = create('fieldset', form)
     let name = create('input', create('label', trg, 'Gegenstand'))
     name.oninput = updateState
+    trg.append( await renderAutoCompleteField(context,name))
+
 
     let id = create('input', create('label', trg, 'Nummer'))
     id.type = 'number'
     id.oninput = updateState
+
+    create('button',trg,'ID generieren').onclick = async e=> {
+        e.preventDefault()
+        let nextId = await getNextID(context.database)
+        console.log('Get next free Id: ',nextId)
+        id.valueAsNumber = nextId
+        updateState()
+    }
 
     let date = create('input', create('label', trg, 'Produktionsdatum'))
     date.type = 'date'
@@ -30,7 +43,10 @@ function renderInputForm(showView: showCallBack, context: Context) {
     let btns = addClasses(create('fieldset', form), 'grid')
 
     let cancle = addClasses(create('button', btns, 'Abbrechen'), 'secondary')
-    cancle.onclick = () => showView('main')
+    cancle.onclick = e => {
+        e.preventDefault()
+        showView('main')
+    }
 
     let btn = create('button', btns, "Hinzufügen")
 
@@ -47,9 +63,37 @@ function renderInputForm(showView: showCallBack, context: Context) {
     updateState()
     function updateState() {
         btn.disabled = (id.value == '' || date.value == '' || name.value == '')
-        cancle.disabled = id.value != '' || name.value != ''
     }
 
+    
+    async function renderAutoCompleteField(context:Context, input:HTMLInputElement)
+    {
+        let availableKeys = Array.from(await getAvailabelKeys(context.database)).sort()
+        let res = addClasses(create('fieldset'),'autocomplete-container')
+        input.oninput = handleChange
+    
+        function handleChange(){
+            clear(res)
+            let val = input.value.toLowerCase()
+            let filteredKeys = val == ''?availableKeys :availableKeys.filter(x=>
+                {
+    
+                    let v = x.toLowerCase()
+                    return v.match(`.*${val}.*`)
+                }
+            )
+            for(let key of filteredKeys)
+            {
+                addClasses(create('button',res,key),'outline','secondary').onclick = e =>{
+                    e.preventDefault()
+                    input.value = key
+                    updateState()
+                }        
+            }
+        }
+        handleChange()
+        return res
+    }
     return form;
 }
 
@@ -57,7 +101,7 @@ async function writeElement(element: DBStorageEntry, context: Context, showView:
         let x = await getItemById(context.database, element.id);
         if(x)
         {
-            document.body.append(renderReplaceDiaog(x,element,context,showView))
+            document.body.append(renderReplaceDialog(x,element,context,showView))
         }
         else{
             await write<STORAGE>(context.database, 'items', element)
@@ -66,7 +110,7 @@ async function writeElement(element: DBStorageEntry, context: Context, showView:
         }
 }
 
-function renderReplaceDiaog(current:DBStorageEntry, replace: DBStorageEntry,context:Context,showView: showCallBack){
+function renderReplaceDialog(current:DBStorageEntry, replace: DBStorageEntry,context:Context,showView: showCallBack){
     let res = create('dialog')
     let trg = create('article',res)
     create('p',create('header',trg),`Der Eintrag mit der Nummer ${current.id} existiert bereits`)

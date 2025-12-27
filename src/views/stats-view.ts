@@ -13,7 +13,7 @@ export async function renderStatsView( showView:showCallBack,context:Context):Pr
     create('button',header, 'back').onclick = ()=> showView('main')
     let stats = await getStats(context.database)
 
-    let table = renderTable(main,'Name','Anzahl')
+    let table = addClasses(renderTable(main,'Name','Anzahl'),'striped')
     for(let name of stats.keys())
     {
         renderTableRow(table,create('span',undefined,name),create('span',undefined,`${stats.get(name)}x`)).onclick = ()=>{

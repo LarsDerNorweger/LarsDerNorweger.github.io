@@ -40,13 +40,13 @@ let show: showCallBack = async (view) => {
             render = renderMainView(show, context)
             break;
         case "edit":
-            render = renderEditView(show, context)
+            render = await renderEditView(show, context)
             break;
         case "stats":
             render = await renderStatsView(show, context)
             break;
         case "details":
-            render = renderDetailsView(show, context)
+            render = await renderDetailsView(show, context)
             break;
         default:
             throw Error("Unsupported View " + view)

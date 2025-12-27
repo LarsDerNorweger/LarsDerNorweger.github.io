@@ -17,7 +17,8 @@ export function openDB(name: string, version: number, updateSchema: (db: IDBData
             if (event.newVersion ?? 0 > version)
             {
                 console.log("Got Version ", event.newVersion,event.oldVersion)
-                rej(DB_ERRORS.reloade_required)
+                console.log('Reload location to update DB')
+                location.reload()
             }
             updateSchema(db.result)
             res(db.result)

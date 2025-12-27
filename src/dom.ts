@@ -16,6 +16,12 @@ export function removeClasses(element: HTMLElement, ...classes: string[]): HTMLE
     return element;
 }
 
+export function setRole<T extends HTMLElement>(element: T,role: string): T
+{
+    element.role = role
+    return element
+} 
+
 export function clear(target: HTMLElement) {
     while (target.hasChildNodes())
         target.firstChild?.remove()

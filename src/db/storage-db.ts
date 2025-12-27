@@ -54,3 +54,56 @@ export async function getStats(db: IDBDatabase) {
     }))
 }
 
+export async function getItemsByName(db: IDBDatabase, name: string) {
+    return await performTransaction<STORAGE, DBStorageEntry[]>(db, 'items', ((trans, res) => {
+        let objectStore = trans.objectStore('items');
+        let req = objectStore.index('name').openCursor(IDBKeyRange.only(name))
+        let result: DBStorageEntry[] = []
+        req.onsuccess = () => {
+            let cursor = req.result
+            if (cursor) {
+                result.push(cursor.value)
+                cursor.continue()
+            }
+            else
+                res(result)
+        }
+    }))
+}
+
+export async function deleteItem(db: IDBDatabase, id: number) {
+    return await performReadWriteTransaction<STORAGE, void>(db, 'items', ((trans, res) => {
+        let objectStore = trans.objectStore('items');
+        let req = objectStore.delete(id)
+        req.onsuccess = () => res()
+    }))
+}
+
+export async function getAvailabelKeys(db: IDBDatabase) {
+    return await performTransaction<STORAGE, Set<string>>(db, 'items', ((trans, res) => {
+        let objectStore = trans.objectStore('items');
+        let req = objectStore.getAll()
+        req.onsuccess = () => {
+            let result = new Set<string>()
+            let x = <DBStorageEntry[]>req.result
+            for (let i of x) {
+                result.add(i.name)
+            }
+            res(result)
+        }
+    }))
+}
+
+export async function getNextID(db:IDBDatabase){
+    return await performTransaction<STORAGE,number>(db,'items',((trans,res)=>{
+        let objectStore = trans.objectStore('items');
+        let req = objectStore.openCursor(null,"prev")
+        req.onsuccess=()=>{
+            let cursor =  req.result
+            if(cursor)
+                res(cursor.value.id+1)
+            else
+                res(1)
+        }
+    }))
+} 
