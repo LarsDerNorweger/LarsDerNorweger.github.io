@@ -7,10 +7,10 @@ export async function renderStatsView( showView:showCallBack,context:Context):Pr
 {
     console.log(context)
 
-    let main =  addClasses( create('main'),'container')
-    let header = addClasses(create('header',main))
+    let main =  addClasses( create('main'),'container-fluid')
+    let header = create('nav', create('header', main))
     create('h2',header,'Übersicht')
-    create('button',header, 'back').onclick = ()=> showView('main')
+    create('button',header, 'back').onclick = ()=> history.back()
     let stats = await getStats(context.database)
 
     let table = addClasses(renderTable(main,'Name','Anzahl'),'striped')
@@ -18,7 +18,7 @@ export async function renderStatsView( showView:showCallBack,context:Context):Pr
     {
         renderTableRow(table,create('span',undefined,name),create('span',undefined,`${stats.get(name)}x`)).onclick = ()=>{
             context.categoryOfInterest = name;
-            showView('details')
+            showView('details',false)
         }
     }
 

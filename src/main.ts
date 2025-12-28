@@ -1,5 +1,5 @@
 import { Context } from "./context";
-import {  openStorageDB } from "./db/storage-db";
+import { openStorageDB } from "./db/storage-db";
 import { addClasses, clear, create } from "./dom"
 import './main.scss'
 import { renderDetailsView } from "./views/detail-view copy";
@@ -10,7 +10,7 @@ import { renderStatsView } from "./views/stats-view";
 import { showCallBack, views } from "./views/views";
 
 
-document.title = "VITE TEST"
+document.title = "Vorratshaltung"
 
 let context: Context
 
@@ -18,19 +18,28 @@ async function main() {
     document.body.append(renderLoader())
     try {
         context = await generateContext()
-        await show(localStorage.getItem('ui-view') as (views | undefined) || 'main')
+        await show(localStorage.getItem('ui-view') as (views | undefined) || 'main',true)
     }
     catch (e) {
         console.error(e)
     }
+    window.onpopstate = handlePopHistory
 }
 
-let show: showCallBack = async (view) => {
+let show: showCallBack = async (view, replaceState) => {
     let render: HTMLElement;
     console.log("Show View", view)
     clear(document.body)
     document.body.append(renderLoader())
-    window.localStorage.setItem('ui-view', view)
+
+    let x = new URL(location.href)
+    x.searchParams.delete('view')
+    x.searchParams.append('view', view)
+    if (replaceState)
+        history.replaceState('', '', x)
+    else
+        history.pushState('', '', x)
+    localStorage.setItem('ui-view', view)
 
     switch (view) {
         case "search":
@@ -53,6 +62,18 @@ let show: showCallBack = async (view) => {
     }
     clear(document.body)
     document.body.append(render)
+}
+
+async function handlePopHistory() {
+    let x = new URL(location.href)
+    let view: views = <views>x.searchParams.get('view') || "main"
+    try {
+        show(<views>view,true)
+    }
+    catch (e) {
+        console.log('Failed to recover View', view, 'Show main view')
+        show('main',true)
+    }
 }
 
 async function generateContext(): Promise<Context> {

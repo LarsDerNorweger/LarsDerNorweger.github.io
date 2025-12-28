@@ -7,7 +7,7 @@ import { showCallBack } from "./views";
 import './edit-view.scss'
 
 export async function renderEditView(showView: showCallBack, context: Context): Promise<HTMLElement> {
-    let main = addClasses(create('main', document.body), 'container')
+    let main = addClasses(create('main', document.body), 'container-fluid')
     let header = addClasses(create('header', main), 'container')
     create('h2', header, 'Neuer Gegenstand')
     main.appendChild(await renderInputForm(showView, context))
@@ -45,7 +45,7 @@ async function renderInputForm(showView: showCallBack, context: Context) {
     let cancle = addClasses(create('button', btns, 'Abbrechen'), 'secondary')
     cancle.onclick = e => {
         e.preventDefault()
-        showView('main')
+        history.back()
     }
 
     let btn = create('button', btns, "Hinzufügen")
@@ -105,7 +105,7 @@ async function writeElement(element: DBStorageEntry, context: Context, showView:
         }
         else{
             await write<STORAGE>(context.database, 'items', element)
-            showView('main')
+            showView('main',true)
             return;
         }
 }
@@ -119,11 +119,11 @@ function renderReplaceDialog(current:DBStorageEntry, replace: DBStorageEntry,con
     let btns = addClasses(create('div',trg),'grid')
     addClasses(create('button',btns,'Nein'),'secondary').onclick = ()=>{
         res.remove()
-        showView('edit')
+        showView('edit',true)
     }
     create('button',btns,'Ja').onclick = ()=>{
         res.remove()
-        showView('main')
+        showView('main',true)
         update<STORAGE>(context.database,'items',replace)
     }
 

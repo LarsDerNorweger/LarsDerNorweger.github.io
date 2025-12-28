@@ -1,5 +1,5 @@
 import { Context } from "../context";
-import { addClasses, create } from "../dom";
+import { addClasses, create, setRole } from "../dom";
 import { showCallBack } from "./views";
 
 export function renderMainView(showView:showCallBack, context:Context):HTMLElement
@@ -7,10 +7,9 @@ export function renderMainView(showView:showCallBack, context:Context):HTMLEleme
     console.log(context)
     let main =  addClasses( create('main'),'container')
     create('header',main,'Main')
-    create('button',main,'Suchen').onclick = () => showView("search")
-    create('button',main,'Gegenstand hinzufuegen').onclick = () => showView("edit")
-    create('button',main,'Übersicht').onclick = () => showView("stats")
-
+    setRole( create('div',main,'Suchen'),'button').onclick = () => showView("search",false)
+    setRole( create('div',main,'Gegenstand hinzufuegen'),'button').onclick = () => showView("edit",false)
+    setRole( create('div',main,'Übersicht'),'button').onclick = () => showView("stats",false)
     
     return main;
 }

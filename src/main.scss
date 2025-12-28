@@ -1,1 +1,6 @@
 @use "@picocss/pico";
+@media (orientation: portrait) {
+    :root{
+        --pico-font-size:200%
+    }
+}
