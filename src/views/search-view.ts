@@ -1,8 +1,7 @@
 import { Context } from "../context";
 import { getItemById } from "../db/storage-db";
-import { renderDeleteDialog, renderDeleteDialogSearch } from "../dialogs/removedialog";
-import { addClasses, create, renderTable } from "../dom";
-import { showCallBack } from "./views";
+import { renderDeleteDialogSearch } from "../dialogs/removedialog";
+import { addClasses, create } from "../dom";
 
 export async function renderSearchView(context:Context):Promise<HTMLElement>
 {
