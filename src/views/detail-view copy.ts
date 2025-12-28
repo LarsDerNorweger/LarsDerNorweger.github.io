@@ -1,5 +1,6 @@
 import { Context } from "../context";
-import { DBStorageEntry, deleteItem, getItemsByName } from "../db/storage-db";
+import { getItemsByName } from "../db/storage-db";
+import { renderDeleteDialog } from "../dialogs/removedialog";
 import { addClasses, create, renderTable, renderTableRow } from "../dom";
 import { showCallBack } from "./views";
 
@@ -30,23 +31,3 @@ export async function renderDetailsView(showView: showCallBack, context: Context
     return main;
 }
 
-function renderDeleteDialog(item: DBStorageEntry, context: Context, showView: showCallBack) {
-    let res = create('dialog')
-    let trg = create('article', res)
-    create('p', create('header', trg), `Soll der Eintrag ${item.name} mit der ID ${item.id} gelöscht werden?`)
-
-    let btns = addClasses(create('div', trg), 'grid')
-    addClasses(create('button', btns, 'Nein'), 'secondary').onclick = () => {
-        res.remove()
-        showView('details', true)
-    }
-    create('button', btns, 'Ja').onclick = () => {
-        res.remove()
-        context.categoryOfInterest = undefined
-        deleteItem(context.database, item.id)
-        showView('stats', true)
-    }
-
-    res.open = true
-    return res
-}

@@ -43,7 +43,7 @@ let show: showCallBack = async (view, replaceState) => {
 
     switch (view) {
         case "search":
-            render = renderSearchView(show, context)
+            render = await renderSearchView( context)
             break;
         case "main":
             render = renderMainView(show, context)

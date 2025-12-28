@@ -6,7 +6,7 @@ export function renderMainView(showView:showCallBack, context:Context):HTMLEleme
 {
     console.log(context)
     let main =  addClasses( create('main'),'container')
-    create('header',main,'Main')
+    create('h2',create('header',main),'Lagerhaltung')
     setRole( create('div',main,'Suchen'),'button').onclick = () => showView("search",false)
     setRole( create('div',main,'Gegenstand hinzufuegen'),'button').onclick = () => showView("edit",false)
     setRole( create('div',main,'Übersicht'),'button').onclick = () => showView("stats",false)
