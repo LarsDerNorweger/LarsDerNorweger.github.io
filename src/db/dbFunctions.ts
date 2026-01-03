@@ -26,7 +26,7 @@ export function openDB(name: string, version: number, updateSchema: (db: IDBData
         db.onsuccess = () => res(db.result)
         db.onerror=(e)=>{
             e.stopPropagation()
-            console.warn('Ignore unhandled error')
+            console.warn('Ignore unhandled error',e)
         } 
     })
 
