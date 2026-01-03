@@ -88,6 +88,7 @@ async function renderInputForm(showView: showCallBack, context: Context) {
                     e.preventDefault()
                     input.value = key
                     updateState()
+                    handleChange()
                 }        
             }
         }
