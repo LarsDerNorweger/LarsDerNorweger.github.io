@@ -18,7 +18,7 @@ async function main() {
     document.body.append(renderLoader())
     try {
         context = await generateContext()
-        await show(localStorage.getItem('ui-view') as (views | undefined) || 'main',true)
+        await show('main',true)
     }
     catch (e) {
         console.error(e)
